@@ -9,7 +9,7 @@ resource "kubernetes_namespace" "udacity" {
 
 resource "kubernetes_service" "blue" {
   metadata {
-    name      = "blue-svc"
+    name      = "blue-svc1"
     namespace = local.name
     annotations = {
       "service.beta.kubernetes.io/aws-load-balancer-type"            = "nlb"
@@ -36,7 +36,7 @@ resource "kubernetes_service" "blue" {
 
 resource "kubernetes_service" "green" {
   metadata {
-    name      = "green-svc"
+    name      = "green-svc1"
     namespace = local.name
     annotations = {
       "service.beta.kubernetes.io/aws-load-balancer-type"            = "nlb"

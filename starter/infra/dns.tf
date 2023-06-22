@@ -5,7 +5,7 @@ resource "aws_route53_record" "blue" {
   ttl     = "5"
 
   weighted_routing_policy {
-    weight = 2
+    weight = 1
   }
 
   set_identifier = "blue"
@@ -23,9 +23,8 @@ resource "aws_route53_record" "green" {
   }
 
   set_identifier = "green"
-  records        = [kubernetes_service.blue.status.0.load_balancer.0.ingress.0.hostname] # https://github.com/hashicorp/terraform-provider-kubernetes/pull/1125
+  records        = [kubernetes_service.green.status.0.load_balancer.0.ingress.0.hostname] # https://github.com/hashicorp/terraform-provider-kubernetes/pull/1125
 }
-
 
 resource "aws_route53_zone" "private_dns" {
   name    = "udacityproject"

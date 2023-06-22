@@ -124,7 +124,13 @@ Ensure you have connectivity to your local kubernetes cluster
     2. Get the external ip from the "green" load balancer with `kubectl get svc`
     3. Run `curl <external_ip_of_loadbalancer>` to see `<html><h1>This is version GREEN</h1></html>`
     4. Or simply start your browser of choice: `<external_ip_of_loadbalancer>`
-11. vdv
+11. Check that both services are running using the `curl instance`
+    1. Connect to the ec2 instance via EC2 Instance Connect
+    2. Then `curl blue-green.udacityproject`
+12. Simulate a failover event to the `green` environment by destroying the blue environment
+    1. `kubectl delete -f .\blue.yml` does the job
+13. Ensure the `blue-green.udacityproject` record now only returns the green environment 
+    1. curl `blue-green.udacityproject` via `curl instance`
  
 
 ## Project Tasks
