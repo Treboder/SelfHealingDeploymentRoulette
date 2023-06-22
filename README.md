@@ -48,15 +48,45 @@ kubectl delete all --all -n udacity
 terraform destroy
 ```
 
-### Applications
+## Applications
 
-#### hello world
+### 1. Hello World
 1. Check all running pods with `kubectl get pods` and grab the `<hello-world-pod-name>`
 2. Get the details for the pod with `kubectl describe pod <hello-world-pod-name>` and check the status
 3. Go to AWS and get the load balancer DNS name, which points to the two EC2 instances serving the hello-world app
 4. Check the hello-world app with your browser and see ![hello_world_deployed.png](starter/screenshots/hello_world_deployed.png)
 
-### Project Tasks
+### 2. Canary Deployment
+Ensure you have connectivity to your local kubernetes cluster
+1. `kubectl config use-context docker-desktop`
+2. Optional: Permanently switch namespace with `kubectl config set-context --current --namespace=udacity` and you do not need `-n udacity` at the end of every command
+2. Apply the `index_v1_html.yml` & `index_v2_html.yml` configmaps to deploy the service html templates.
+    1. Run `kubectl apply -f index_v1_html.yml`
+    2. Run`kubectl apply -f index_v2_html.yml`
+    3. Check with `kubectl get configmap -n udacity`
+3. Deploy the service to the cluster (`canary-svc.yml`)
+    1. Run `kubectl apply -f .\canary-svc.yml`
+    2. Check with `kubectl get service -n udacity`
+4. Deploy the v1 & v2 starter template to the cluster (`canary-v1.yml`, `canary-v2.yml`)
+    1. Run `kubectl apply -f .\canary-v1.yml` (container with v1 started right now)
+    2. Run `kubectl apply -f .\canary-v2.yml` (You'll notice v2 has `0` replicas)
+5. Get the service cluster ip address and curl it 5 times to confirm only v1 of the application is reachable
+    1. `kubectl get service canary-svc -n udacity`
+    2. Use an ephermeral container to access the kubernetes internal network
+        1. `kubectl run debug --rm -i --tty --image nicolaka/netshoot -- /bin/bash`
+        2. `curl <service_ip>` and see `<html><h1>This is version 1</h1></html`
+6. Now we will initiate a canary deployment for `canary-v2` via a bash script
+    1. Run the bash script `./canary.sh`
+    2. Check that the procedure replaced all the containers with the new nginx version
+7. During the first manual verification step ensure you can curl the service and get a response from both versions of the application.
+    1. Then continue until all replicas of v2 are deployed
+8. Tear down environment
+    1. `kubectl delete all --all -n udacity`
+
+### 3. Blue-Green Deployment
+
+
+## Project Tasks
 
 *NOTE* All AWS infrastructure changes outside of the EKS cluster can be made in the project terraform code
 
