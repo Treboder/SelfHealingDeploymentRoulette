@@ -48,6 +48,14 @@ kubectl delete all --all -n udacity
 terraform destroy
 ```
 
+### Applications
+
+#### hello world
+1. Check all running pods with `kubectl get pods` and grab the `<hello-world-pod-name>`
+2. Get the details for the pod with `kubectl describe pod <hello-world-pod-name>` and check the status
+3. Go to AWS and get the load balancer DNS name, which points to the two EC2 instances serving the hello-world app
+4. Check the hello-world app with your browser and see ![hello_world_deployed.png](starter/screenshots/hello_world_deployed.png)
+
 ### Project Tasks
 
 *NOTE* All AWS infrastructure changes outside of the EKS cluster can be made in the project terraform code
