@@ -57,34 +57,33 @@ terraform destroy
 4. Check the hello-world app with your browser and see ![hello_world_deployed.png](starter/screenshots/hello_world_deployed.png)
 
 ### 2. Canary Deployment
-Ensure you have connectivity to your local kubernetes cluster
-1. `kubectl config use-context docker-desktop`
-2. Optional: Permanently switch namespace with `kubectl config set-context --current --namespace=udacity` and you do not need `-n udacity` at the end of every command
-2. Apply the `index_v1_html.yml` & `index_v2_html.yml` configmaps to deploy the service html templates.
+1. Ensure you have connectivity to your local kubernetes cluster 
+2. `kubectl config use-context docker-desktop`
+3. Optional: Permanently switch namespace with `kubectl config set-context --current --namespace=udacity` and you do not need `-n udacity` at the end of every command
+4. Apply the `index_v1_html.yml` & `index_v2_html.yml` configmaps to deploy the service html templates.
     1. Run `kubectl apply -f index_v1_html.yml`
     2. Run`kubectl apply -f index_v2_html.yml`
     3. Check with `kubectl get configmap -n udacity`
-3. Deploy the service to the cluster (`canary-svc.yml`)
+5. Deploy the service to the cluster (`canary-svc.yml`)
     1. Run `kubectl apply -f .\canary-svc.yml`
     2. Check with `kubectl get service -n udacity`
-4. Deploy the v1 & v2 starter template to the cluster (`canary-v1.yml`, `canary-v2.yml`)
+6. Deploy the v1 & v2 starter template to the cluster (`canary-v1.yml`, `canary-v2.yml`)
     1. Run `kubectl apply -f .\canary-v1.yml` (container with v1 started right now)
     2. Run `kubectl apply -f .\canary-v2.yml` (You'll notice v2 has `0` replicas)
-5. Get the service cluster ip address and curl it 5 times to confirm only v1 of the application is reachable
+7. Get the service cluster ip address and curl it 5 times to confirm only v1 of the application is reachable
     1. `kubectl get service canary-svc -n udacity`
     2. Use an ephermeral container to access the kubernetes internal network
         1. `kubectl run debug --rm -i --tty --image nicolaka/netshoot -- /bin/bash`
         2. `curl <service_ip>` and see `<html><h1>This is version 1</h1></html`
-6. Now we will initiate a canary deployment for `canary-v2` via a bash script
+8. Now we will initiate a canary deployment for `canary-v2` via a bash script
     1. Run the bash script `./canary.sh`
     2. Check that the procedure replaced all the containers with the new nginx version
-7. During the first manual verification step ensure you can curl the service and get a response from both versions of the application.
+9. During the first manual verification step ensure you can curl the service and get a response from both versions of the application.
     1. Then continue until all replicas of v2 are deployed
-8. Tear down environment
-    1. `kubectl delete all --all -n udacity`
+10. Tear down environment
+     1. `kubectl delete all --all -n udacity`
 
 ### 3. Blue-Green Deployment
-
 1. Log into your student AWS account and switch to region `us-east-2`
 2. Setup your local aws credentials
 3. Launch the kubernetes cluster in starter terraform code provided
@@ -133,8 +132,29 @@ Ensure you have connectivity to your local kubernetes cluster
     1. curl `blue-green.udacityproject` via `curl instance`
 
 ### 3. Bloatware Deployment
-1. Deploy the app with `kubectl apply -f bloatware.yml`
+1. Log into your student AWS account and switch to region `us-east-2`
+2. Setup your local aws credentials
+3. Launch the kubernetes cluster in starter terraform code provided
+    1. `terraform init`
+    2. `terraform plan`
+    3. `terraform apply`
+4. Ensure you have connectivity to your aws kubernetes cluster
+   1.`aws eks --region us-east-2 update-kubeconfig --name udacity-cluster`
+   2.Change Kubernetes context to the new AWS cluster
+    - `kubectl config use-context <cluster_name>` (e.g. arn:aws:eks:us-east-2:225791329475:cluster/udacity-cluster)
+    3. Confirm with: `kubectl get pods --all-namespaces`
+    4. Change context to `udacity` namespace
+        - `kubectl config set-context --current --namespace=udacity`
+5. Launch the `bloatware.yml` application on the cluster
+    1. `kubectl apply -f bloatware.yml`
+6. Take a screenshot of the running pods: `kubectl get pods -n udacity`
+7. You'll notice NOT all of the pods are in running state (AWS cluster can't support all of them with the initial single node).
+    1. Identity the problem with them using the `kubectl describe` command
+    2. e.g `kubectl describe pod <name_of_pod>`
+    3. you'll notice at the bottom in events ` 0/2 nodes are available ...`
 
+
+eksctl create iamserviceaccount --name cluster-autoscaler --namespace kube-system --cluster udacity-cluster --attach-policy-arn "arn:aws:iam::${840071472393}:policy/udacity-k8s-autoscale" --approve --override-existing-serviceaccounts --region=us-east-2
 
 
 
