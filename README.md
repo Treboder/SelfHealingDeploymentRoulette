@@ -50,7 +50,7 @@ terraform destroy
 
 ## Applications
 
-### 1. Hello World
+### 1. Hello World Deployment
 1. Check all running pods with `kubectl get pods` and grab the `<hello-world-pod-name>`
 2. Get the details for the pod with `kubectl describe pod <hello-world-pod-name>` and check the status
 3. Go to AWS and get the load balancer DNS name, which points to the two EC2 instances serving the hello-world app
@@ -85,6 +85,47 @@ Ensure you have connectivity to your local kubernetes cluster
 
 ### 3. Blue-Green Deployment
 
+1. Log into your student AWS account and switch to region `us-east-2`
+2. Setup your local aws credentials
+3. Launch the kubernetes cluster in starter terraform code provided
+    1. `terraform init`
+    2. `terraform plan`
+    3. `terraform apply` optionally with parameter `--auto-approve`
+4. Ensure you have connectivity to your aws kubernetes cluster
+   1.`aws eks --region us-east-2 update-kubeconfig --name udacity-cluster`
+   2.Change Kubernetes context to the new AWS cluster
+    - `kubectl config use-context arn:aws:eks:us-east-2:225791329475:cluster/udacity-cluster`
+    3. Confirm with: `kubectl get pods --all-namespaces`
+    4. Change context to `udacity` namespace
+        - `kubectl config set-context --current --namespace=udacity`
+5. Apply the `index_blue_html.yml` & `index_green_html.yml` configmaps to deploy the service html templates.
+    1. Run `kubectl apply -f .\index_blue_html.yml`
+    2. Run `kubectl apply -f .\index_green_html.yml`
+    3. Check with `kubectl get configmap`
+6. Deploy the blue application to the cluster `blue.yml`
+    1. Run `kubectl apply -f .\blue.yml` spawns the pods with app "blue"
+    2. Check with `kubectl get pods` shows the running pods with app "blue"
+7. Check the "blue" deployment via curl
+    1. Get the external ip from the "blue" load balancer with `kubectl get svc`
+    2. Run `curl <external_ip_of_loadbalancer>` to see `<html><h1>This is version BLUE</h1></html>`
+    3. Or simply start your browser of choice: `<external_ip_of_loadbalancer>`
+8. You'll notice there is a load balancer service created for you in the `kubernetes_resources.tf`
+    1. There is also an associated dns zone `udacityexercise` in `dns.tf` that allows you to curl the hostname `blue-green.udacityexercise` from an ec2 instance
+    2. Confirm you can curl this hostname from the created `curl-instance` ec2 instance (also created via terraform before)
+        1. Connect to the ec2 instance via EC2 Instance Connect
+        2. Then `curl blue-green.udacityproject`
+9. Deploy the "green" app by executing the shell script `blue-green.sh`, which effectively:
+````
+    kubectl apply -f ./index_green_html.yml
+    kubectl apply -f ./green.yml
+````
+10. Confirm that the "green" app is deployed
+    1. Run `kubectl get pods` to see the green pods running
+    2. Get the external ip from the "green" load balancer with `kubectl get svc`
+    3. Run `curl <external_ip_of_loadbalancer>` to see `<html><h1>This is version GREEN</h1></html>`
+    4. Or simply start your browser of choice: `<external_ip_of_loadbalancer>`
+11. vdv
+ 
 
 ## Project Tasks
 
