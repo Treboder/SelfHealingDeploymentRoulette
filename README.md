@@ -131,7 +131,13 @@ Ensure you have connectivity to your local kubernetes cluster
     1. `kubectl delete -f .\blue.yml` does the job
 13. Ensure the `blue-green.udacityproject` record now only returns the green environment 
     1. curl `blue-green.udacityproject` via `curl instance`
- 
+
+### 3. Bloatware Deployment
+1. Deploy the app with `kubectl apply -f bloatware.yml`
+
+
+
+
 
 ## Project Tasks
 
