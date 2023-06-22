@@ -4,24 +4,23 @@
 
 ### Dependencies
 
-- Udacity AWS Gateway
+- AWS Account
 - [kubectl](https://kubernetes.io/docs/tasks/tools/)
 - [awscli](https://aws.amazon.com/cli/)
 - [eksctl](https://eksctl.io/introduction/#installation)
 - [terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli?in=terraform/aws-get-started)
 - [helm](https://www.eksworkshop.com/beginner/060_helm/helm_intro/install/)
 
-### Installation
+### Installation 
+**Step by step explanation of how to get a dev environment running.**
 
-Step by step explanation of how to get a dev environment running.
-----------
 The AWS environment will be built in the `us-east-2` region of AWS
 
 1. Set up your AWS credentials from Udacity AWS Gateway locally
     - `https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html`
 
 2. From the AWS console manually create an S3 bucket in `us-east-2` called `udacity-tf-<your_name>`
-   e.g `udacity-tf-emmanuel`
+   e.g `udacity-tf-treboder`
     - The click `create bucket`
     - Update `_config.tf` with your S3 bucket name
 
@@ -42,7 +41,12 @@ The AWS environment will be built in the `us-east-2` region of AWS
 6. Run K8s initialization script
     - `./initialize_k8s.sh`
 
-7. Done
+7. Clean up the environment with the `nuke_everything.sh` script or run the steps individually
+```
+terraform state rm kubernetes_namespace.udacity && terraform state rm kubernetes_service.blue
+kubectl delete all --all -n udacity
+terraform destroy
+```
 
 ### Project Tasks
 
