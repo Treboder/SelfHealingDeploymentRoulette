@@ -1,10 +1,14 @@
 # Deployment Roulette
 
 Reviewer Feedback 
+Dear reviewer,
+thanks for the great feedback. 
+I further improved the project, and hope the requirements are met in order to pass. 
+Please find my comments below
 
 Deployment Troubleshooting
-- hello_world_troubleshooting.png shows the faulty code segment
-- hello_World_healthy_logs.png shows that the application is returning the logs healthy! as expected.
+The file hello_world_troubleshooting.png shows the faulty code segment.
+The file hello_World_healthy_log.png shows that the application is returning the logs healthy! as expected.
 
 Node Elasticity
 Thanks for the hint, but I do not use the Udacity credentials, instead use my personal.
@@ -54,8 +58,7 @@ The AWS environment will be built in the `us-east-2` region of AWS
     - Change context to `udacity` namespace
         - `kubectl config set-context --current --namespace=udacity`
 
-6. Run K8s initialization script
-    - `./initialize_k8s.sh`
+6. Follow the exercise instructions below
 
 7. Clean up the environment with the `nuke_everything.sh` script or run the steps individually
 ```
@@ -67,11 +70,13 @@ terraform destroy
 ## Applications
 
 ### 1. Hello World Deployment
-1. Check all running pods with `kubectl get pods` and grab the `<hello-world-pod-name>`
-2. Get the details for the pod with `kubectl describe pod <hello-world-pod-name>` and check the status
-3. Go to AWS and get the load balancer DNS name, which points to the two EC2 instances serving the hello-world app
-4. Check that the hello-world application is returning the logs healthy! by `running kubectl logs <pod_name>`
-5. Check the hello-world app with your browser and see ![hello_world_deployed.png](starter/screenshots/hello_world_deployed.png)
+1. Deploy the app by running `kubectl apply -f .\hello.yml   `
+2. Check all running pods with `kubectl get pods` and grab the `<hello-world-pod-name>`
+3. Get the details for the pod with `kubectl describe pod <hello-world-pod-name>` and check the status
+4. Go to AWS and get the load balancer DNS name, which points to the two EC2 instances serving the hello-world app
+5. Check that the hello-world application is returning the logs healthy! by running `kubectl logs <pod_name>`
+6. Check the hello-world app with your browser and see ![hello_world_deployed.png](starter/screenshots/hello_world_deployed.png)
+
 
 
 ### 2. Canary Deployment
@@ -80,7 +85,7 @@ terraform destroy
 3. Optional: Permanently switch namespace with `kubectl config set-context --current --namespace=udacity` and you do not need `-n udacity` at the end of every command
 4. Apply the `index_v1_html.yml` & `index_v2_html.yml` configmaps to deploy the service html templates.
     1. Run `kubectl apply -f index_v1_html.yml`
-    2. Run`kubectl apply -f index_v2_html.yml`
+    2. Run `kubectl apply -f index_v2_html.yml`
     3. Check with `kubectl get configmap -n udacity`
 5. Deploy the service to the cluster (`canary-svc.yml`)
     1. Run `kubectl apply -f .\canary-svc.yml`
