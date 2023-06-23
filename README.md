@@ -1,6 +1,6 @@
 # Deployment Roulette
 
-This is a project demonstating deployment skills and strategies taught in the Udacity course "Site Reliability Engineer".
+This is a project demonstrating deployment skills and strategies taught in the Udacity course "Site Reliability Engineer".
 The original repo is [nd087-c3-deployment-roulette](https://github.com/udacity/nd087-c3-deployment-roulette)
 
 ## Dev Machine Dependencies
