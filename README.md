@@ -1,6 +1,6 @@
 # Deployment Roulette
 
-Reviewer Feedback 
+## Reviewer feedback ## 
 Dear reviewer,
 thanks for the great feedback. 
 I further improved the project, and hope the requirements are met in order to pass. 
@@ -22,7 +22,7 @@ Identified the hello-world app as the most demanding one, then removed from the 
 Please check the screenshots with the metrics k8s_metrics_before.png and k8s_metrics_after.png.
 
 Diagramming
-
+Did it - please check the architecture.png
 
 ## Getting Started
 
@@ -66,7 +66,9 @@ The AWS environment will be built in the `us-east-2` region of AWS
 
 7. Clean up the environment with the `nuke_everything.sh` script or run the steps individually
 ```
+cd starter/infra
 terraform state rm kubernetes_namespace.udacity && terraform state rm kubernetes_service.blue
+eksctl delete iamserviceaccount --name cluster-autoscaler --namespace kube-system --cluster udacity-cluster --region us-east-2
 kubectl delete all --all -n udacity
 terraform destroy
 ```
@@ -257,19 +259,6 @@ terraform destroy
     1. Create an architectural diagram that accurately describes the current status of your AWS environment.
         1. Make sure to include your AWS resources like the EKS cluster, load balancers
         2. Visualize one or two deployments and their microservices
-
-## Project Clean Up
-
-In an effort to reduce your cost footprint in the AWS environment. Feel free to tear down your aws environment when not
-in use. Clean up the environment with the `nuke_everything.sh` script or run the steps individually
-
-```
-cd starter/infra
-terraform state rm kubernetes_namespace.udacity && terraform state rm kubernetes_service.blue
-eksctl delete iamserviceaccount --name cluster-autoscaler --namespace kube-system --cluster udacity-cluster --region us-east-2
-kubectl delete all --all -n udacity
-terraform destroy
-```
 
 ## License
 
