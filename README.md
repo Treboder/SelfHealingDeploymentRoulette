@@ -1,5 +1,21 @@
 # Deployment Roulette
 
+Reviewer Feedback 
+
+Deployment Troubleshooting
+- hello_world_troubleshooting.png shows the faulty code segment
+- hello_World_healthy_logs.png shows that the application is returning the logs healthy! as expected.
+
+Node Elasticity
+Thanks for the hint, but I do not use the Udacity credentials, instead use my personal.
+Any other ideas?
+Since the auto-scaler is not ready yet, I increased the pods semi-automated via terraform.
+Please find the screenshot of all working nodes under bloaty_pods_increased.png
+
+Observability
+
+Diagramming
+
 ## Getting Started
 
 ### Dependencies
@@ -54,7 +70,9 @@ terraform destroy
 1. Check all running pods with `kubectl get pods` and grab the `<hello-world-pod-name>`
 2. Get the details for the pod with `kubectl describe pod <hello-world-pod-name>` and check the status
 3. Go to AWS and get the load balancer DNS name, which points to the two EC2 instances serving the hello-world app
-4. Check the hello-world app with your browser and see ![hello_world_deployed.png](starter/screenshots/hello_world_deployed.png)
+4. Check that the hello-world application is returning the logs healthy! by `running kubectl logs <pod_name>`
+5. Check the hello-world app with your browser and see ![hello_world_deployed.png](starter/screenshots/hello_world_deployed.png)
+
 
 ### 2. Canary Deployment
 1. Ensure you have connectivity to your local kubernetes cluster 
