@@ -14,11 +14,15 @@ Node Elasticity
 Thanks for the hint, but I do not use the Udacity credentials, instead use my personal.
 Any other ideas?
 Since the auto-scaler is not ready yet, I increased the pods semi-automated via terraform.
-Please find the screenshot of all working nodes under bloaty_pods_increased.png
+Please find the screenshot with increased number of nodes under bloaty_nodes_increased_manually.png.
+Please find the screenshot of all working nodes under bloaty_pods_with_additional_nodes.png
 
 Observability
+Identified the hello-world app as the most demanding one, then removed from the cluster.
+Please check the screenshots with the metrics k8s_metrics_before.png and k8s_metrics_after.png.
 
 Diagramming
+
 
 ## Getting Started
 
@@ -67,6 +71,12 @@ kubectl delete all --all -n udacity
 terraform destroy
 ```
 
+### Metrics Server
+
+1. Install with `kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml`
+2. Verify with `kubectl get deployment metrics-server -n kube-system`
+3. Show pods and their basic stats with `kubectl top pods --sort-by=memory` 
+
 ## Applications
 
 ### 1. Hello World Deployment
@@ -76,8 +86,7 @@ terraform destroy
 4. Go to AWS and get the load balancer DNS name, which points to the two EC2 instances serving the hello-world app
 5. Check that the hello-world application is returning the logs healthy! by running `kubectl logs <pod_name>`
 6. Check the hello-world app with your browser and see ![hello_world_deployed.png](starter/screenshots/hello_world_deployed.png)
-
-
+7. Clean up the with `kubectl delete -f .\hello.yml`
 
 ### 2. Canary Deployment
 1. Ensure you have connectivity to your local kubernetes cluster 
@@ -103,8 +112,7 @@ terraform destroy
     2. Check that the procedure replaced all the containers with the new nginx version
 9. During the first manual verification step ensure you can curl the service and get a response from both versions of the application.
     1. Then continue until all replicas of v2 are deployed
-10. Tear down environment
-     1. `kubectl delete all --all -n udacity`
+10. Tear down environment with `kubectl delete all --all -n udacity`
 
 ### 3. Blue-Green Deployment
 1. Log into your student AWS account and switch to region `us-east-2`
@@ -153,8 +161,9 @@ terraform destroy
     1. `kubectl delete -f .\blue.yml` does the job
 13. Ensure the `blue-green.udacityproject` record now only returns the green environment 
     1. curl `blue-green.udacityproject` via `curl instance`
+14. Clean up the with `kubectl delete all --all -n udacity`
 
-### 3. Bloatware Deployment
+### 3. Bloatware Deployment (node elasticity)
 1. Log into your student AWS account and switch to region `us-east-2`
 2. Setup your local aws credentials
 3. Launch the kubernetes cluster in starter terraform code provided
@@ -171,15 +180,20 @@ terraform destroy
 5. Launch the `bloatware.yml` application on the cluster
     1. `kubectl apply -f bloatware.yml`
 6. Take a screenshot of the running pods: `kubectl get pods -n udacity`
-7. You'll notice NOT all of the pods are in running state (AWS cluster can't support all of them with the initial single node).
+7. You'll notice NOT all the pods are in running state (AWS cluster can't support all of them with the initial single node).
     1. Identity the problem with them using the `kubectl describe` command
     2. e.g `kubectl describe pod <name_of_pod>`
     3. you'll notice at the bottom in events ` 0/2 nodes are available ...`
+7. Clean up the with `kubectl delete all --all -n udacity`
 
-
-eksctl create iamserviceaccount --name cluster-autoscaler --namespace kube-system --cluster udacity-cluster --attach-policy-arn "arn:aws:iam::${840071472393}:policy/udacity-k8s-autoscale" --approve --override-existing-serviceaccounts --region=us-east-2
-
-
+**Manual scaling as a workaround in case creation of the service user fails**
+1. To resolve this problem manually increase the cluster node size via terraform and apply
+  ```
+   nodes_desired_size = 4
+   nodes_max_size     = 10
+   nodes_min_size     = 1
+  ```
+2. Wait 5 mins then take a screenshot of the running pods: `kubectl get pods -n udacity`. You'll notice the pods that were in a pending are now able to be deployed successfully with the increased resources available to the cluster.
 
 
 ## Project Tasks
