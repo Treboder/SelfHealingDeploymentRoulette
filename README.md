@@ -1,32 +1,9 @@
 # Deployment Roulette
 
-## Reviewer feedback ## 
-Dear reviewer,
-thanks for the great feedback. 
-I further improved the project, and hope the requirements are met in order to pass. 
-Please find my comments below
+This is a project demonstating deployment skills and strategies taught in the Udacity course "Site Reliability Engineer".
+The original repo is [nd087-c3-deployment-roulette](https://github.com/udacity/nd087-c3-deployment-roulette)
 
-Deployment Troubleshooting
-The file hello_world_troubleshooting.png shows the faulty code segment.
-The file hello_World_healthy_log.png shows that the application is returning the logs healthy! as expected.
-
-Node Elasticity
-Thanks for the hint, but I do not use the Udacity credentials, instead use my personal.
-Any other ideas?
-Since the auto-scaler is not ready yet, I increased the pods semi-automated via terraform.
-Please find the screenshot with increased number of nodes under bloaty_nodes_increased_manually.png.
-Please find the screenshot of all working nodes under bloaty_pods_with_additional_nodes.png
-
-Observability
-Identified the hello-world app as the most demanding one, then removed from the cluster.
-Please check the screenshots with the metrics k8s_metrics_before.png and k8s_metrics_after.png.
-
-Diagramming
-Did it - please check the architecture.png
-
-## Getting Started
-
-### Dependencies
+## Dev Machine Dependencies
 
 - AWS Account
 - [kubectl](https://kubernetes.io/docs/tasks/tools/)
@@ -35,7 +12,7 @@ Did it - please check the architecture.png
 - [terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli?in=terraform/aws-get-started)
 - [helm](https://www.eksworkshop.com/beginner/060_helm/helm_intro/install/)
 
-### Installation 
+## Project Setup 
 **Step by step explanation of how to get a dev environment running.**
 
 The AWS environment will be built in the `us-east-2` region of AWS
@@ -73,15 +50,41 @@ kubectl delete all --all -n udacity
 terraform destroy
 ```
 
-### Metrics Server
+## K8s Metrics Server
+You might want to use `metrics-server` to see some basic statistics.
 
 1. Install with `kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml`
 2. Verify with `kubectl get deployment metrics-server -n kube-system`
 3. Show pods and their basic stats with `kubectl top pods --sort-by=memory` 
 
-## Applications
+# Visualizing AWS EKS Cluster
+You may visualize your AWS EKS cluster in exercise 3 using the helm chart `kube-ops-view`
 
-### 1. Hello World Deployment
+1. Install [helm](https://www.eksworkshop.com/beginner/060_helm/helm_intro/install/)
+2. Add the stable repo: `helm repo add stable https://charts.helm.sh/stable`
+3. Install the helm chart `kube-ops-view`
+    ```
+    helm install kube-ops-view 
+    ```
+   or
+    ``` 
+    helm install stable/kube-ops-view --set service.type=LoadBalancer
+    ```
+   with results in failure ("ensure CRDs installed")
+    ```    
+    --set rbac.create=True
+    ```
+4. Confirm the helm chart is installed successfully
+    - `helm list`
+
+5. Get the service url to view the cluster dashboard
+- `kubectl get svc kube-ops-view | tail -n 1 | awk '{ print "Kube-ops-view URL = http://"$4 }'`
+
+To remove this deployment use: `helm uninstall kube-ops-view`
+
+# PROJECT APPLICATIONS
+
+## 1. Hello World Deployment
 1. Deploy the app by running `kubectl apply -f .\hello.yml   `
 2. Check all running pods with `kubectl get pods` and grab the `<hello-world-pod-name>`
 3. Get the details for the pod with `kubectl describe pod <hello-world-pod-name>` and check the status
@@ -90,7 +93,7 @@ terraform destroy
 6. Check the hello-world app with your browser and see ![hello_world_deployed.png](starter/screenshots/hello_world_deployed.png)
 7. Clean up the with `kubectl delete -f .\hello.yml`
 
-### 2. Canary Deployment
+## 2. Canary Deployment
 1. Ensure you have connectivity to your local kubernetes cluster 
 2. `kubectl config use-context docker-desktop`
 3. Optional: Permanently switch namespace with `kubectl config set-context --current --namespace=udacity` and you do not need `-n udacity` at the end of every command
@@ -116,7 +119,7 @@ terraform destroy
     1. Then continue until all replicas of v2 are deployed
 10. Tear down environment with `kubectl delete all --all -n udacity`
 
-### 3. Blue-Green Deployment
+## 3. Blue-Green Deployment
 1. Log into your student AWS account and switch to region `us-east-2`
 2. Setup your local aws credentials
 3. Launch the kubernetes cluster in starter terraform code provided
@@ -165,7 +168,7 @@ terraform destroy
     1. curl `blue-green.udacityproject` via `curl instance`
 14. Clean up the with `kubectl delete all --all -n udacity`
 
-### 3. Bloatware Deployment (node elasticity)
+## 3. Bloatware Deployment (node elasticity)
 1. Log into your student AWS account and switch to region `us-east-2`
 2. Setup your local aws credentials
 3. Launch the kubernetes cluster in starter terraform code provided
@@ -198,7 +201,7 @@ terraform destroy
 2. Wait 5 mins then take a screenshot of the running pods: `kubectl get pods -n udacity`. You'll notice the pods that were in a pending are now able to be deployed successfully with the increased resources available to the cluster.
 
 
-## Project Tasks
+# PROJECT TASKS
 
 *NOTE* All AWS infrastructure changes outside of the EKS cluster can be made in the project terraform code
 
